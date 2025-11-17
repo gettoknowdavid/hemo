@@ -1,0 +1,19 @@
+name: hemo
+description: "A cross-platform (iOS/Android) blood donation app built with Flutter. Hemo aims to connect donors, recipients, and blood banks to streamline the donation process."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
