@@ -1,20 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:hemo/main_development.dart' as dev;
 
 void main() {
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
-    );
-  }
+  // Launch the development config by default
+  dev.main();
 }
