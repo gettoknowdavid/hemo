@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "430595920960",
+    "project_id": "hemo-gtkd",
+    "storage_bucket": "hemo-gtkd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:430595920960:android:862084d42e3af41d0dfba5",
+        "android_client_info": {
+          "package_name": "com.gettoknowdavid.hemo.hemo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9YwxX3GCK8RUubvaVRFWDnUPnFHx-v-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
