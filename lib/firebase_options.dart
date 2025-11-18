@@ -48,17 +48,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyD8zm_qA8p9F5NVIN3sgqq3xBUP0P7GULY',
-    appId: '1:430595920960:web:378214c9165540060dfba5',
+    appId: '1:430595920960:web:4510e919e3058fda0dfba5',
     messagingSenderId: '430595920960',
     projectId: 'hemo-gtkd',
     authDomain: 'hemo-gtkd.firebaseapp.com',
     storageBucket: 'hemo-gtkd.firebasestorage.app',
-    measurementId: 'G-JWVVHXHHQW',
+    measurementId: 'G-LVFJF79H21',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyC9YwxX3GCK8RUubvaVRFWDnUPnFHx-v-I',
-    appId: '1:430595920960:android:862084d42e3af41d0dfba5',
+    appId: '1:430595920960:android:e5da05a0eba5d26f0dfba5',
     messagingSenderId: '430595920960',
     projectId: 'hemo-gtkd',
     storageBucket: 'hemo-gtkd.firebasestorage.app',
@@ -66,12 +66,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCxZDQGLEG0azCUA78XSrFZzd0ZBHKZTyw',
-    appId: '1:430595920960:ios:dfab13a975edf2e50dfba5',
+    appId: '1:430595920960:ios:c15c6e4fcaff26a30dfba5',
     messagingSenderId: '430595920960',
     projectId: 'hemo-gtkd',
     storageBucket: 'hemo-gtkd.firebasestorage.app',
-    iosClientId: '430595920960-iu6fmb3lle40eecibp60qhd9spvnh1or.apps.googleusercontent.com',
-    iosBundleId: 'com.gettoknowdavid.hemo.hemo',
+    iosClientId: '430595920960-ldu6p1ger8n3s7ld5frpuet4liori6v9.apps.googleusercontent.com',
+    iosBundleId: 'com.gettoknowdavid.hemo',
   );
 
 }

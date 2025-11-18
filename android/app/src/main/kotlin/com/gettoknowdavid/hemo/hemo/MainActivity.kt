@@ -1,4 +1,4 @@
-package com.gettoknowdavid.hemo.hemo
+package com.gettoknowdavid.hemo
 
 import io.flutter.embedding.android.FlutterActivity
 

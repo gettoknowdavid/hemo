@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:430595920960:android:862084d42e3af41d0dfba5",
+        "mobilesdk_app_id": "1:430595920960:android:e5da05a0eba5d26f0dfba5",
         "android_client_info": {
-          "package_name": "com.gettoknowdavid.hemo.hemo"
+          "package_name": "com.gettoknowdavid.hemo"
         }
       },
       "oauth_client": [
