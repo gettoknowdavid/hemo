@@ -70,6 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '430595920960',
     projectId: 'hemo-gtkd',
     storageBucket: 'hemo-gtkd.firebasestorage.app',
+    iosClientId: '430595920960-iu6fmb3lle40eecibp60qhd9spvnh1or.apps.googleusercontent.com',
     iosBundleId: 'com.gettoknowdavid.hemo.hemo',
   );
+
 }

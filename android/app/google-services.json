@@ -12,7 +12,12 @@
           "package_name": "com.gettoknowdavid.hemo.hemo"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "430595920960-baedrj0va4kviog6oja0osduhs92d9sh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC9YwxX3GCK8RUubvaVRFWDnUPnFHx-v-I"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "430595920960-baedrj0va4kviog6oja0osduhs92d9sh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "430595920960-iu6fmb3lle40eecibp60qhd9spvnh1or.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gettoknowdavid.hemo.hemo"
+              }
+            }
+          ]
         }
       }
     }
