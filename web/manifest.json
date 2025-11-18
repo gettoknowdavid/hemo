@@ -3,7 +3,7 @@
     "short_name": "hemo",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
+    "background_color": "#FFFFFF",
     "theme_color": "#0175C2",
     "description": "A cross-platform (iOS/Android) blood donation app built with Flutter. Hemo aims to connect donors, recipients, and blood banks to streamline the donation process.",
     "orientation": "portrait-primary",
