@@ -1,0 +1,45 @@
+enum BloodGroup { aPos, aNeg, bPos, bNeg, oPos, oNeg, abPos, abNeg, unknown }
+
+extension BloodGroupX on BloodGroup {
+  bool get isAPos => this == .aPos;
+
+  bool get isANeg => this == .aNeg;
+
+  bool get isBPos => this == .bPos;
+
+  bool get isBNeg => this == .bNeg;
+
+  bool get isOPos => this == .oPos;
+
+  bool get isONeg => this == .oNeg;
+
+  bool get isABPos => this == .abPos;
+
+  bool get isABNeg => this == .abNeg;
+
+  bool get isUnknown => this == .unknown;
+
+  String get name => switch (this) {
+    .aPos => 'A+',
+    .aNeg => 'A-',
+    .bPos => 'B+',
+    .bNeg => 'B-',
+    .oPos => 'O+',
+    .oNeg => 'O-',
+    .abPos => 'AB+',
+    .abNeg => 'AB-',
+    .unknown => 'Unknown',
+  };
+}
+
+const Map<BloodGroup, String> $BloodGroupMap = {
+  BloodGroup.aPos: 'A+',
+  BloodGroup.aNeg: 'A-',
+  BloodGroup.bPos: 'B+',
+  BloodGroup.bNeg: 'B-',
+  BloodGroup.oPos: 'O+',
+  BloodGroup.oNeg: 'O-',
+  BloodGroup.abPos: 'AB+',
+  BloodGroup.abNeg: 'AB-',
+  BloodGroup.unknown: 'unknown',
+};
