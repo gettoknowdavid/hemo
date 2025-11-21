@@ -19,6 +19,13 @@ final class HUser with EquatableMixin {
     this.photoURL,
   });
 
+  factory HUser.empty() => const HUser(
+    uid: '',
+    name: '',
+    email: '',
+    userType: UserType.recipient,
+  );
+
   factory HUser.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
