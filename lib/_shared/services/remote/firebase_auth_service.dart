@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hemo/_shared/services/models/h_user.dart';
 
 final class FirebaseAuthService {
   const FirebaseAuthService({required FirebaseAuth auth}) : _auth = auth;
