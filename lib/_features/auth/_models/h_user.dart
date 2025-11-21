@@ -24,7 +24,7 @@ final class HUserProxy extends ChangeNotifier {
 
   BloodGroup get bloodGroup => _target.bloodGroup;
 
-  bool get isDonorEligible => _target.isDonorEligible;
+  bool get canDonate => _target.canDonate;
 
   String? get photoURL => _target.photoURL;
 }

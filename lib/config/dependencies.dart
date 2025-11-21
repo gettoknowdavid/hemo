@@ -2,27 +2,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:hemo/_features/auth/_managers/auth_manager.dart';
+import 'package:hemo/_features/auth/_models/auth_scope.dart';
+import 'package:hemo/_shared/services/models/h_user.dart';
 import 'package:hemo/_shared/services/remote/firebase_auth_service.dart';
 import 'package:hemo/_shared/services/remote/firebase_firestore_service.dart';
-import 'package:logging/logging.dart';
+import 'package:hemo/routing/router.dart';
 
-void registerDependencies() {
-  di.registerFactoryParam<Logger, String, dynamic>((name, _) => Logger(name));
+Future<void> registerDependencies() async {
+  di.pushNewScope(scopeName: AuthScope.unknown);
+  di.registerSingleton<HUser>(.empty());
 
   di.registerSingleton<FirebaseAuth>(.instance);
   di.registerSingleton<FirebaseFirestore>(.instance);
 
-  di.registerSingleton<FirebaseAuthService>(
-    FirebaseAuthService(auth: di<FirebaseAuth>()),
-  );
-  di.registerSingleton<FirebaseFirestoreService>(
-    FirebaseFirestoreService(store: di<FirebaseFirestore>()),
-  );
+  di.registerSingleton(FirebaseAuthService(di<FirebaseAuth>()));
+  di.registerSingleton(FirebaseFirestoreService(di<FirebaseFirestore>()));
 
-  di.registerSingleton<AuthManager>(
-    AuthManager(
+  di.registerSingletonAsync<AuthManager>(
+    () => AuthManager(
       auth: di<FirebaseAuthService>(),
       store: di<FirebaseFirestoreService>(),
-    ),
+    ).initialize(),
   );
+
+  await di.isReady<AuthManager>();
+
+  di.registerSingletonAsync(() async => routerConfig());
+
+  await di.allReady();
 }

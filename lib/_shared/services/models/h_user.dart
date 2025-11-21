@@ -15,7 +15,7 @@ final class HUser with EquatableMixin {
     required this.email,
     required this.userType,
     this.bloodGroup = BloodGroup.unknown,
-    this.isDonorEligible = false,
+    this.canDonate = false,
     this.photoURL,
   });
 
@@ -38,7 +38,7 @@ final class HUser with EquatableMixin {
       email: data['email'] as String? ?? '',
       userType: $enumDecode($UserTypeEnumMap, data['user_type']),
       bloodGroup: $enumDecode($BloodGroupMap, data['blood_group']),
-      isDonorEligible: data['is_donor_eligible'] as bool? ?? false,
+      canDonate: data['can_donate'] as bool? ?? false,
       photoURL: data['photo_url'] as String?,
     );
   }
@@ -48,16 +48,16 @@ final class HUser with EquatableMixin {
   final String email;
   final UserType userType;
   final BloodGroup bloodGroup;
-  final bool isDonorEligible;
+  final bool canDonate;
   final String? photoURL;
 
-  Map<String, dynamic> toFirstore() => {
+  Map<String, dynamic> toFirestore() => {
     'uid': uid,
     'name': name,
     'email': email,
     'user_type': userType.name,
     'blood_group': bloodGroup.name,
-    'is_donor_eligible': isDonorEligible,
+    'can_donate': canDonate,
     if (photoURL != null) 'photo_url': photoURL,
   };
 
@@ -68,7 +68,7 @@ final class HUser with EquatableMixin {
     email,
     userType,
     bloodGroup,
-    isDonorEligible,
+    canDonate,
     photoURL,
   ];
 }
