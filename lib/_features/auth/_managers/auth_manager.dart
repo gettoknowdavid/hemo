@@ -6,7 +6,7 @@ import 'package:hemo/_shared/services/remote/firebase_auth_service.dart';
 import 'package:hemo/_shared/services/remote/firebase_firestore_service.dart';
 import 'package:logging/logging.dart';
 
-typedef LoginParams = ({String email, String password});
+typedef SignInParams = ({String email, String password});
 
 final class AuthManager with ChangeNotifier {
   AuthManager({
@@ -20,7 +20,7 @@ final class AuthManager with ChangeNotifier {
 
   final _log = Logger('AUTH_MANAGER');
 
-  late final Command<LoginParams, void> loginCommand = .createAsyncNoResult(
+  late final Command<SignInParams, void> signInCommand = .createAsyncNoResult(
     (params) async {
       final uid = await _auth.signInWithEmailAndPassword(
         email: params.email,
@@ -30,7 +30,7 @@ final class AuthManager with ChangeNotifier {
     },
   );
 
-  late final Command<void, void> logoutCommand = .createAsyncNoParamNoResult(
+  late final Command<void, void> signOutCommand = .createAsyncNoParamNoResult(
     () async {
       await _auth.signOut();
       await _handleSignOut();

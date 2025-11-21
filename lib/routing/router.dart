@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart' show di;
 import 'package:go_router/go_router.dart';
 import 'package:hemo/_features/auth/_managers/auth_manager.dart';
 import 'package:hemo/_features/auth/_models/auth_scope.dart';
-import 'package:hemo/_features/auth/login/widgets/login_page.dart';
+import 'package:hemo/_features/auth/sign_in/widgets/sign_in_page.dart';
 import 'package:hemo/_features/home/widgets/home_page.dart';
 import 'package:hemo/_features/onboarding/base/widgets/base_page.dart';
 import 'package:hemo/routing/routes.dart';
@@ -14,12 +14,12 @@ GoRouter routerConfig() {
 
     final nextRoute = state.matchedLocation;
 
-    final publicRoutes = [Routes.base, Routes.login];
+    final publicRoutes = [Routes.base, Routes.signIn];
     final isPublicRoute = publicRoutes.contains(nextRoute);
 
     switch (scope) {
       case AuthScope.unauthenticated:
-        if (!isPublicRoute) return Routes.login;
+        if (!isPublicRoute) return Routes.signIn;
         return null;
       case AuthScope.authenticated:
         if (isPublicRoute) return Routes.home;
@@ -40,8 +40,8 @@ GoRouter routerConfig() {
         builder: (context, state) => const BasePage(),
       ),
       GoRoute(
-        path: Routes.login,
-        builder: (context, state) => const LoginPage(),
+        path: Routes.signIn,
+        builder: (context, state) => const SignInPage(),
       ),
       GoRoute(
         path: Routes.home,

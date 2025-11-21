@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:hemo/_features/auth/_managers/auth_manager.dart';
 
-class LoginPage extends WatchingStatefulWidget {
-  const LoginPage({super.key});
+class SignInPage extends WatchingStatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignInPage> createState() => _SignInnPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignInnPageState extends State<SignInPage> {
   final AuthManager _manager = di<AuthManager>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _manager.loginCommand.errors.listen((error, _) {
+    _manager.signInCommand.errors.listen((error, _) {
       if (error == null) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.error.toString())),
@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = watchValue((AuthManager m) => m.loginCommand.isRunning);
+    final isLoading = watchValue((AuthManager m) => m.signInCommand.isRunning);
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    _manager.loginCommand.run((
+    _manager.signInCommand.run((
       email: _emailController.text,
       password: _passwordController.text,
     ));

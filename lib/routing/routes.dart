@@ -3,7 +3,7 @@ class Routes {
 
   static const base = '/';
   static const splash = '/splash';
-  static const login = '/login';
+  static const signIn = '/sign-in';
   static const home = '/home';
 }
 
