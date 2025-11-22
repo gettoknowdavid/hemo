@@ -1,10 +1,18 @@
 class Routes {
   const Routes._();
 
-  static const base = '/';
+  static const List<String> public = [
+    Routes.loading,
+    Routes.signIn,
+    Routes.signUp,
+  ];
+
+  static const loading = '/loading';
   static const splash = '/splash';
   static const signIn = '/sign-in';
-  static const home = '/home';
+  static const signUp = '/sign-up';
+  static const emailVerification = '/email-verification';
+  static const home = '/';
 }
 
 extension RoutesX on String {

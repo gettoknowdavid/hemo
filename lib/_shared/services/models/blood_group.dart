@@ -28,7 +28,7 @@ extension BloodGroupX on BloodGroup {
     .oNeg => 'O-',
     .abPos => 'AB+',
     .abNeg => 'AB-',
-    .unknown => 'Unknown',
+    .unknown => 'UNKNOWN',
   };
 }
 
@@ -41,5 +41,5 @@ const Map<BloodGroup, String> $BloodGroupMap = {
   BloodGroup.oNeg: 'O-',
   BloodGroup.abPos: 'AB+',
   BloodGroup.abNeg: 'AB-',
-  BloodGroup.unknown: 'unknown',
+  BloodGroup.unknown: 'UNKNOWN',
 };

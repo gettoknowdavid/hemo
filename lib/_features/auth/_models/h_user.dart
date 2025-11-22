@@ -14,11 +14,41 @@ final class HUserProxy extends ChangeNotifier {
     notifyListeners();
   }
 
+  static HUserProxy empty = HUserProxy(HUser.empty());
+
+  /// Updates specific fields of the user and notifies listeners.
+  void update({
+    String? name,
+    String? email,
+    String? phoneNumber,
+    UserType? userType,
+    BloodGroup? bloodGroup,
+    bool? canDonate,
+    String? photoURL,
+    bool? emailVerified,
+  }) {
+    // Use the copyWith method on the target HUser to create an updated instance
+    _target = _target.copyWith(
+      name: name,
+      email: email,
+      phoneNumber: phoneNumber,
+      userType: userType,
+      bloodGroup: bloodGroup,
+      canDonate: canDonate,
+      photoURL: photoURL,
+      emailVerified: emailVerified,
+    );
+    // Notify all listeners that the proxy's data has changed
+    notifyListeners();
+  }
+
   String get uid => _target.uid;
 
   String get name => _target.name;
 
   String get email => _target.email;
+
+  String? get phoneNumber => _target.phoneNumber;
 
   UserType get userType => _target.userType;
 
@@ -27,4 +57,6 @@ final class HUserProxy extends ChangeNotifier {
   bool get canDonate => _target.canDonate;
 
   String? get photoURL => _target.photoURL;
+
+  bool get emailVerified => _target.emailVerified;
 }

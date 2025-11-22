@@ -8,7 +8,7 @@ class HomePage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final manager = di<AuthManager>();
-    final isLoading = watchValue((AuthManager m) => m.signOutCommand.isRunning);
+    final isLoading = watchValue((AuthManager m) => m.signOut.isRunning);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
@@ -18,7 +18,7 @@ class HomePage extends WatchingWidget {
           child: Column(
             children: [
               FilledButton(
-                onPressed: isLoading ? null : manager.signOutCommand.run,
+                onPressed: isLoading ? null : manager.signOut.run,
                 child: isLoading
                     ? const Text('Loading...')
                     : const Text('Logout'),

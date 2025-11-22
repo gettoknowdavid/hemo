@@ -10,6 +10,10 @@ final class FirebaseFirestoreService {
     await _store.collection('users').doc(user.uid).set(user.toFirestore());
   }
 
+  Future<void> updateUser(HUser user) async {
+    await _store.collection('users').doc(user.uid).update(user.toFirestore());
+  }
+
   Future<HUser> getUser(String uid) async {
     final doc = await _store.collection('users').doc(uid).get();
     return HUser.fromFirestore(doc, null);
