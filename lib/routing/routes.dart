@@ -12,6 +12,8 @@ class Routes {
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
   static const emailVerification = '/email-verification';
+  static const phoneNumberLinking = '/phone-number-linking';
+  static const phoneNumberVerification = '$phoneNumberLinking/verification';
   static const home = '/';
 }
 

@@ -33,6 +33,7 @@ class _SignInnPageState extends State<SignInPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _manager.signIn.dispose();
     super.dispose();
   }
 

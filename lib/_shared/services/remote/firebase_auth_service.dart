@@ -51,17 +51,25 @@ final class FirebaseAuthService {
     await _auth.signOut();
   }
 
-  Future<void> verifyPhoneNumber(VerifyPhoneNumberParams params) {
+  Future<void> verifyPhoneNumber(
+    String phoneNumber, {
+    required void Function(PhoneAuthCredential cred) onVerificationCompleted,
+    required void Function(FirebaseAuthException e) onVerificationFailed,
+    required void Function(String verificationId, int? resendToken) onCodeSent,
+    required void Function(String verificationId) onCodeTimeout,
+    int? forceResendingToken,
+  }) {
     return _auth.verifyPhoneNumber(
-      phoneNumber: params.phoneNumber,
-      verificationCompleted: params.onVerificationCompleted,
-      verificationFailed: params.onVerificationFailed,
-      codeSent: params.onCodeSent,
-      codeAutoRetrievalTimeout: params.onCodeTimeout,
+      phoneNumber: phoneNumber,
+      verificationCompleted: onVerificationCompleted,
+      verificationFailed: onVerificationFailed,
+      codeSent: onCodeSent,
+      codeAutoRetrievalTimeout: onCodeTimeout,
+      forceResendingToken: forceResendingToken,
     );
   }
 
-  Future<void> linkPhoneNumber(LinkPhoneNumberParams params) async {
+  Future<void> linkPhoneNumber(LinkMobileParams params) async {
     final user = _auth.currentUser;
     if (user == null) throw const UnauthenticatedException();
 
@@ -70,7 +78,8 @@ final class FirebaseAuthService {
       smsCode: params.smsCode,
     );
 
-    final assertion = PhoneMultiFactorGenerator.getAssertion(credential);
-    await user.multiFactor.enroll(assertion);
+    await user.linkWithCredential(credential);
+
+    await user.reload();
   }
 }

@@ -34,6 +34,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _manager.signUp.dispose();
     super.dispose();
   }
 

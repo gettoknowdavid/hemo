@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hemo/_features/auth/_managers/auth_manager.dart';
 import 'package:hemo/_features/auth/_models/auth_scope.dart';
 import 'package:hemo/_features/auth/email_verification/widgets/email_verification_page.dart';
+import 'package:hemo/_features/auth/phone_number_linking/widgets/phone_number_linking_page.dart';
+import 'package:hemo/_features/auth/phone_number_linking/widgets/phone_verification_page.dart';
 import 'package:hemo/_features/auth/sign_in/widgets/sign_in_page.dart';
 import 'package:hemo/_features/auth/sign_up/widgets/sign_up_page.dart';
 import 'package:hemo/_features/home/widgets/home_page.dart';
@@ -12,7 +14,8 @@ import 'package:hemo/routing/routes.dart';
 
 GoRouter routerConfig() {
   Future<String?> redirect(BuildContext context, GoRouterState state) async {
-    final isPublicRoute = Routes.public.contains(state.matchedLocation);
+    final nextRoute = state.matchedLocation;
+    final isPublicRoute = Routes.public.contains(nextRoute);
 
     switch (di.currentScopeName) {
       case AuthScope.unauthenticated:
@@ -20,6 +23,9 @@ GoRouter routerConfig() {
         return null;
       case AuthScope.unverified:
         return Routes.emailVerification;
+      case AuthScope.noPhoneNumber:
+        if ([Routes.phoneNumberVerification].contains(nextRoute)) return null;
+        return Routes.phoneNumberLinking;
       case AuthScope.authenticated:
         if (isPublicRoute) return Routes.home;
         return null;
@@ -50,6 +56,21 @@ GoRouter routerConfig() {
         path: Routes.emailVerification,
         builder: (context, state) => const EmailVerificationPage(),
       ),
+      GoRoute(
+        path: Routes.phoneNumberLinking,
+        builder: (context, state) => const PhoneNumberLinkingPage(),
+        routes: [
+          GoRoute(
+            path: 'verification',
+            name: Routes.phoneNumberVerification,
+            builder: (context, state) => PhoneVerificationPage(
+              verificationId: state.uri.queryParameters['verificationId']!,
+              phoneNumber: state.uri.queryParameters['phoneNumber']!,
+            ),
+          ),
+        ],
+      ),
+
       GoRoute(
         path: Routes.home,
         builder: (context, state) => const HomePage(),

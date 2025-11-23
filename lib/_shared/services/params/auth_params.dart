@@ -4,7 +4,8 @@ typedef SignInParams = ({String email, String password});
 
 typedef SignUpParams = ({String name, String email, String password});
 
-typedef VerifyPhoneNumberParams = ({
+/// Parameters for verifying phone number
+typedef VerifyMobileParams = ({
   String phoneNumber,
   void Function(PhoneAuthCredential credential) onVerificationCompleted,
   void Function(FirebaseAuthException e) onVerificationFailed,
@@ -12,4 +13,5 @@ typedef VerifyPhoneNumberParams = ({
   void Function(String verificationId) onCodeTimeout,
 });
 
-typedef LinkPhoneNumberParams = ({String verificationId, String smsCode});
+/// Parameters for linking phone number
+typedef LinkMobileParams = ({String verificationId, String smsCode});

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hemo/_features/auth/_managers/auth_manager.dart';
 import 'package:hemo/_features/auth/_models/auth_scope.dart';
 import 'package:hemo/_features/auth/_models/h_user.dart';
@@ -34,4 +35,6 @@ Future<void> registerDependencies() async {
   di.registerSingletonAsync(() async => routerConfig());
 
   await di.allReady();
+
+  FlutterNativeSplash.remove();
 }

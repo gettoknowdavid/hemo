@@ -43,6 +43,67 @@ final class AuthManager with ChangeNotifier {
     initialValue: false,
   );
 
+  /// This holds the verification ID received from Firebase.
+  /// It's a ValueNotifier so the UI can listen for when the code is sent.
+  final verificationId = ValueNotifier<String?>(null);
+
+  /// This holds the token needed to resend the verification code.
+  final resendToken = ValueNotifier<int?>(null);
+
+  late final Command<VerifyMobileParams, void> verifyPhoneNumber =
+      .createAsyncNoResult(
+        (params) async => _auth.verifyPhoneNumber(
+          params.phoneNumber,
+          forceResendingToken: resendToken.value,
+          onVerificationCompleted: params.onVerificationCompleted,
+          onVerificationFailed: params.onVerificationFailed,
+          onCodeTimeout: params.onCodeTimeout,
+          onCodeSent: (vId, rToken) {
+            _log.info('Code sent. Verification ID: $vId');
+            verificationId.value = vId;
+            resendToken.value = rToken;
+            params.onCodeSent(vId, rToken);
+          },
+        ),
+      );
+
+  /// Re-triggers the verifyPhoneNumber command using the stored phone number
+  /// and token.
+  late final Command<String, void> resendPhoneVerificationCode =
+      Command.createAsyncNoResult(
+        (phoneNumber) async => verifyPhoneNumber.run((
+          phoneNumber: phoneNumber,
+          onVerificationCompleted: (_) {},
+          onVerificationFailed: (_) {},
+          onCodeSent: (_, _) {},
+          onCodeTimeout: (_) {},
+        )),
+      );
+
+  late final Command<LinkMobileParams, bool> linkPhoneNumber = .createAsync(
+    (params) async {
+      await _auth.linkPhoneNumber(params);
+
+      final firebaseUser = _auth.currentUser;
+      if (firebaseUser == null) return false;
+
+      final userProxy = di<HUserProxy>();
+      userProxy.update(phoneNumber: firebaseUser.phoneNumber);
+      await _store.updateUser(userProxy.target);
+
+      if (di.hasScope(AuthScope.authenticated)) {
+        await di.dropScope(AuthScope.authenticated);
+      }
+
+      di.pushNewScope(scopeName: AuthScope.authenticated);
+      di.registerSingleton<HUserProxy>(userProxy);
+
+      notifyListeners();
+      return true;
+    },
+    initialValue: false,
+  );
+
   Future<AuthManager> initialize() async {
     final firebaseUser = _auth.currentUser;
     if (firebaseUser == null) {
@@ -56,7 +117,19 @@ final class AuthManager with ChangeNotifier {
       }
 
       di.pushNewScope(scopeName: AuthScope.unverified);
+      final target = HUser.fromFirebaseUser(firebaseUser);
+      di.registerSingleton<HUserProxy>(HUserProxy(target));
 
+      notifyListeners();
+      return this;
+    }
+
+    if (firebaseUser.emailVerified && firebaseUser.phoneNumber == null) {
+      if (di.hasScope(AuthScope.noPhoneNumber)) {
+        await di.dropScope(AuthScope.noPhoneNumber);
+      }
+
+      di.pushNewScope(scopeName: AuthScope.noPhoneNumber);
       final target = HUser.fromFirebaseUser(firebaseUser);
       di.registerSingleton<HUserProxy>(HUserProxy(target));
 
@@ -80,17 +153,29 @@ final class AuthManager with ChangeNotifier {
         di.pushNewScope(scopeName: AuthScope.unverified);
         di.registerSingleton<HUserProxy>(HUserProxy(user));
       } else {
-        if (di.hasScope(AuthScope.authenticated)) {
-          _log.info(
-            'HAS SCOPE AUTHENTICATED ::: DROPPING "authenticated" SCOPE',
-          );
-          await di.dropScope(AuthScope.authenticated);
-        }
+        final firebaseUser = _auth.currentUser!;
+        if (firebaseUser.emailVerified && firebaseUser.phoneNumber == null) {
+          if (di.hasScope(AuthScope.noPhoneNumber)) {
+            await di.dropScope(AuthScope.noPhoneNumber);
+          }
 
-        _log.info('AUTHENTICATED ::: PUSHING "authenticated" SCOPE');
-        di.pushNewScope(scopeName: AuthScope.authenticated);
-        di.registerSingleton<HUserProxy>(HUserProxy(user));
+          di.pushNewScope(scopeName: AuthScope.noPhoneNumber);
+          final target = HUser.fromFirebaseUser(firebaseUser);
+          di.registerSingleton<HUserProxy>(HUserProxy(target));
+        } else {
+          if (di.hasScope(AuthScope.authenticated)) {
+            _log.info(
+              'HAS SCOPE AUTHENTICATED ::: DROPPING "authenticated" SCOPE',
+            );
+            await di.dropScope(AuthScope.authenticated);
+          }
+
+          _log.info('AUTHENTICATED ::: PUSHING "authenticated" SCOPE');
+          di.pushNewScope(scopeName: AuthScope.authenticated);
+          di.registerSingleton<HUserProxy>(HUserProxy(user));
+        }
       }
+      notifyListeners();
     } on Exception catch (error) {
       _log.severe('ERROR FETCHING USER FROM DB, FORCING SIGN_OUT', error);
 
@@ -146,11 +231,11 @@ final class AuthManager with ChangeNotifier {
         userProxy.update(emailVerified: emailVerified);
         await _store.updateUser(userProxy.target);
 
-        if (di.hasScope(AuthScope.authenticated)) {
-          await di.dropScope(AuthScope.authenticated);
+        if (di.hasScope(AuthScope.noPhoneNumber)) {
+          await di.dropScope(AuthScope.noPhoneNumber);
         }
 
-        di.pushNewScope(scopeName: AuthScope.authenticated);
+        di.pushNewScope(scopeName: AuthScope.noPhoneNumber);
         di.registerSingleton<HUserProxy>(userProxy);
 
         return true;
