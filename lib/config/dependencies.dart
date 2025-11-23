@@ -7,11 +7,16 @@ import 'package:hemo/_features/auth/_models/auth_scope.dart';
 import 'package:hemo/_features/auth/_models/h_user.dart';
 import 'package:hemo/_shared/services/remote/firebase_auth_service.dart';
 import 'package:hemo/_shared/services/remote/firebase_firestore_service.dart';
+import 'package:hemo/_shared/services/shared_preferences_service.dart';
 import 'package:hemo/routing/router.dart';
 
 Future<void> registerDependencies() async {
   di.pushNewScope(scopeName: AuthScope.unknown);
   di.registerSingleton<HUserProxy>(.empty);
+
+  di.registerSingletonAsync<SharedPreferencesService>(
+    SharedPreferencesService.initialize,
+  );
 
   di.registerSingleton<FirebaseAuth>(.instance);
   di.registerSingleton<FirebaseFirestore>(.instance);
