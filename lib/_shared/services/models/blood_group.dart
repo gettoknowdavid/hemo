@@ -33,13 +33,13 @@ extension BloodGroupX on BloodGroup {
 }
 
 const Map<BloodGroup, String> $BloodGroupMap = {
-  BloodGroup.aPos: 'A+',
-  BloodGroup.aNeg: 'A-',
-  BloodGroup.bPos: 'B+',
-  BloodGroup.bNeg: 'B-',
-  BloodGroup.oPos: 'O+',
-  BloodGroup.oNeg: 'O-',
-  BloodGroup.abPos: 'AB+',
-  BloodGroup.abNeg: 'AB-',
-  BloodGroup.unknown: 'UNKNOWN',
+  .aPos: 'A+',
+  .aNeg: 'A-',
+  .bPos: 'B+',
+  .bNeg: 'B-',
+  .oPos: 'O+',
+  .oNeg: 'O-',
+  .abPos: 'AB+',
+  .abNeg: 'AB-',
+  .unknown: 'UNKNOWN',
 };
