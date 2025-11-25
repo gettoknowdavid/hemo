@@ -3,12 +3,13 @@ class Routes {
 
   static const List<String> public = [
     Routes.loading,
+    Routes.onboarding,
     Routes.signIn,
     Routes.signUp,
   ];
 
   static const loading = '/loading';
-  static const splash = '/splash';
+  static const onboarding = '/onboarding';
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
   static const emailVerification = '/email-verification';

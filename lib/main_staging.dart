@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hemo/app.dart';
+import 'package:hemo/_app/app.dart';
 
 /// Staging config entry point.
 /// Launch with `flutter run --target lib/main_staging.dart`.

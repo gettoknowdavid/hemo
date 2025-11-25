@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hemo/app.dart';
+import 'package:hemo/_app/app.dart';
 
 /// Production config entry point.
 /// Launch with `flutter run --target lib/main_production.dart`.

@@ -10,9 +10,19 @@ final class SharedPreferencesService {
     return SharedPreferencesService._(preferences);
   }
 
-  Future<bool> write(String key, String value) => _prefs.setString(key, value);
+  Future<bool> setString(String key, String value) {
+    return _prefs.setString(key, value);
+  }
+
+  Future<bool> setBool(String key, {required bool value}) {
+    return _prefs.setBool(key, value);
+  }
 
   Object? getString(String key) => _prefs.get(key);
 
   bool? hasKey(String key) => _prefs.containsKey(key);
+
+  Future<bool> clearAll() => _prefs.clear();
+
+  Future<bool> removeKey(String key) => _prefs.remove(key);
 }

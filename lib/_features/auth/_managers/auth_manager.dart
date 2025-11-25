@@ -1,15 +1,17 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:hemo/_features/auth/_models/auth_scope.dart';
 import 'package:hemo/_features/auth/_models/h_user.dart';
+import 'package:hemo/_shared/services/models/h_scope.dart';
 import 'package:hemo/_shared/services/models/h_user.dart';
 import 'package:hemo/_shared/services/params/auth_params.dart';
 import 'package:hemo/_shared/services/remote/firebase_auth_service.dart';
 import 'package:hemo/_shared/services/remote/firebase_firestore_service.dart';
 import 'package:logging/logging.dart';
 
-final class AuthManager with ChangeNotifier {
+final class AuthManager with ChangeNotifier implements Disposable {
   AuthManager({
     required FirebaseAuthService auth,
     required FirebaseFirestoreService store,
@@ -91,11 +93,11 @@ final class AuthManager with ChangeNotifier {
       userProxy.update(phoneNumber: firebaseUser.phoneNumber);
       await _store.updateUser(userProxy.target);
 
-      if (di.hasScope(AuthScope.authenticated)) {
-        await di.dropScope(AuthScope.authenticated);
+      if (di.hasScope(HScope.authenticated)) {
+        await di.dropScope(HScope.authenticated);
       }
 
-      di.pushNewScope(scopeName: AuthScope.authenticated);
+      di.pushNewScope(scopeName: HScope.authenticated);
       di.registerSingleton<HUserProxy>(userProxy);
 
       notifyListeners();
@@ -112,11 +114,11 @@ final class AuthManager with ChangeNotifier {
     }
 
     if (!firebaseUser.emailVerified) {
-      if (di.hasScope(AuthScope.unverified)) {
-        await di.dropScope(AuthScope.unverified);
+      if (di.hasScope(HScope.unverified)) {
+        await di.dropScope(HScope.unverified);
       }
 
-      di.pushNewScope(scopeName: AuthScope.unverified);
+      di.pushNewScope(scopeName: HScope.unverified);
       final target = HUser.fromFirebaseUser(firebaseUser);
       di.registerSingleton<HUserProxy>(HUserProxy(target));
 
@@ -125,11 +127,11 @@ final class AuthManager with ChangeNotifier {
     }
 
     if (firebaseUser.emailVerified && firebaseUser.phoneNumber == null) {
-      if (di.hasScope(AuthScope.noPhoneNumber)) {
-        await di.dropScope(AuthScope.noPhoneNumber);
+      if (di.hasScope(HScope.noPhoneNumber)) {
+        await di.dropScope(HScope.noPhoneNumber);
       }
 
-      di.pushNewScope(scopeName: AuthScope.noPhoneNumber);
+      di.pushNewScope(scopeName: HScope.noPhoneNumber);
       final target = HUser.fromFirebaseUser(firebaseUser);
       di.registerSingleton<HUserProxy>(HUserProxy(target));
 
@@ -146,32 +148,32 @@ final class AuthManager with ChangeNotifier {
       final user = await _store.getUser(uid);
 
       if (!user.emailVerified) {
-        if (di.hasScope(AuthScope.unverified)) {
-          await di.dropScope(AuthScope.unverified);
+        if (di.hasScope(HScope.unverified)) {
+          await di.dropScope(HScope.unverified);
         }
 
-        di.pushNewScope(scopeName: AuthScope.unverified);
+        di.pushNewScope(scopeName: HScope.unverified);
         di.registerSingleton<HUserProxy>(HUserProxy(user));
       } else {
         final firebaseUser = _auth.currentUser!;
         if (firebaseUser.emailVerified && firebaseUser.phoneNumber == null) {
-          if (di.hasScope(AuthScope.noPhoneNumber)) {
-            await di.dropScope(AuthScope.noPhoneNumber);
+          if (di.hasScope(HScope.noPhoneNumber)) {
+            await di.dropScope(HScope.noPhoneNumber);
           }
 
-          di.pushNewScope(scopeName: AuthScope.noPhoneNumber);
+          di.pushNewScope(scopeName: HScope.noPhoneNumber);
           final target = HUser.fromFirebaseUser(firebaseUser);
           di.registerSingleton<HUserProxy>(HUserProxy(target));
         } else {
-          if (di.hasScope(AuthScope.authenticated)) {
+          if (di.hasScope(HScope.authenticated)) {
             _log.info(
               'HAS SCOPE AUTHENTICATED ::: DROPPING "authenticated" SCOPE',
             );
-            await di.dropScope(AuthScope.authenticated);
+            await di.dropScope(HScope.authenticated);
           }
 
           _log.info('AUTHENTICATED ::: PUSHING "authenticated" SCOPE');
-          di.pushNewScope(scopeName: AuthScope.authenticated);
+          di.pushNewScope(scopeName: HScope.authenticated);
           di.registerSingleton<HUserProxy>(HUserProxy(user));
         }
       }
@@ -191,12 +193,12 @@ final class AuthManager with ChangeNotifier {
       final user = HUser.fromFirebaseUser(firebaseUser);
       await _store.createUser(user);
 
-      if (di.hasScope(AuthScope.unverified)) {
-        await di.dropScope(AuthScope.unverified);
+      if (di.hasScope(HScope.unverified)) {
+        await di.dropScope(HScope.unverified);
       }
 
       _log.info('UNVERIFIED ::: PUSHING "unverified" SCOPE');
-      di.pushNewScope(scopeName: AuthScope.unverified);
+      di.pushNewScope(scopeName: HScope.unverified);
       di.registerSingleton<HUserProxy>(HUserProxy(user));
     } on Exception catch (error) {
       _log.severe('ERROR FETCHING USER FROM DB, FORCING SIGN_OUT', error);
@@ -209,12 +211,12 @@ final class AuthManager with ChangeNotifier {
   }
 
   Future<void> _handleSignOut() async {
-    if (di.hasScope(AuthScope.unauthenticated)) {
+    if (di.hasScope(HScope.unauthenticated)) {
       _log.info('UNAUTHENTICATED. POPPING SCOPE');
       await di.popScope();
     } else {
       _log.info('UNAUTHENTICATED. PUSHING "unauthenticated" SCOPE');
-      di.pushNewScope(scopeName: AuthScope.unauthenticated);
+      di.pushNewScope(scopeName: HScope.unauthenticated);
       di.registerSingleton<HUserProxy>(.empty);
     }
 
@@ -231,11 +233,11 @@ final class AuthManager with ChangeNotifier {
         userProxy.update(emailVerified: emailVerified);
         await _store.updateUser(userProxy.target);
 
-        if (di.hasScope(AuthScope.noPhoneNumber)) {
-          await di.dropScope(AuthScope.noPhoneNumber);
+        if (di.hasScope(HScope.noPhoneNumber)) {
+          await di.dropScope(HScope.noPhoneNumber);
         }
 
-        di.pushNewScope(scopeName: AuthScope.noPhoneNumber);
+        di.pushNewScope(scopeName: HScope.noPhoneNumber);
         di.registerSingleton<HUserProxy>(userProxy);
 
         return true;
@@ -248,5 +250,19 @@ final class AuthManager with ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  @override
+  FutureOr<dynamic> onDispose() {
+    signIn.dispose();
+    signOut.dispose();
+    signUp.dispose();
+    checkVerification.dispose();
+    resendVerificationEmail.dispose();
+    verificationId.dispose();
+    resendToken.dispose();
+    verifyPhoneNumber.dispose();
+    resendPhoneVerificationCode.dispose();
+    linkPhoneNumber.dispose();
   }
 }
