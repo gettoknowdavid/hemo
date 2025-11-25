@@ -25,7 +25,7 @@ class HemoApp extends WatchingWidget {
       builder: (context, child) => MaterialApp.router(
         debugShowCheckedModeBanner: false,
         routerConfig: di<GoRouter>(),
-        theme: HTheme.theme.copyWith(),
+        theme: HTheme.theme,
         builder: (context, child) {
           final defaultTextScaler = MediaQuery.textScalerOf(context);
           final textScaler = defaultTextScaler.clamp(
