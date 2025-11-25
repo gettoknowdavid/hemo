@@ -63,7 +63,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             _Indicator(currentPage: _currentPage, onTap: goToPage),
             73.verticalSpace,
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16).r,
+              padding: const EdgeInsets.symmetric(horizontal: 20).r,
               child: HPrimaryButton(
                 isLastPage ? 'Get Started' : 'Next',
                 onPressed: isLastPage ? goToLogin : nextPage,
