@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hemo/_features/auth/_managers/auth_manager.dart';
+import 'package:hemo/_features/auth/_models/h_user.dart';
+import 'package:hemo/_shared/ui/theme/theme.dart';
+import 'package:hemo/_shared/ui/ui/buttons/h_primary_button.dart';
+import 'package:hemo/_shared/ui/ui/buttons/h_secondary_button.dart';
+import 'package:hemo/_shared/ui/ui/buttons/h_text_button.dart';
+import 'package:hemo/_shared/ui/ui/ui.dart';
 import 'package:hemo/routing/routes.dart';
 
 class EmailVerificationPage extends WatchingWidget {
@@ -10,6 +17,7 @@ class EmailVerificationPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final manager = di<AuthManager>();
+    final user = di<HUserProxy>();
 
     final isChecking = watchValue(
       (AuthManager m) => m.checkVerification.isRunning,
@@ -83,31 +91,54 @@ class EmailVerificationPage extends WatchingWidget {
         if (didPop) manager.signOut.run();
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Verification')),
+        appBar: AppBar(title: const Text('Email Verification')),
         body: SingleChildScrollView(
-          padding: const .all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16).r,
           child: Column(
             crossAxisAlignment: .stretch,
             children: [
-              FilledButton(
-                onPressed: inProgress ? null : manager.checkVerification.run,
-                child: isChecking
-                    ? const Text('Checking...')
-                    : const Text('Check Verification'),
+              RichText(
+                text: TextSpan(
+                  style: HTextStyles.subtitle.copyWith(
+                    color: HColors.onSurface,
+                  ),
+                  children: [
+                    const TextSpan(
+                      text: "We've sent a verification link to your email: ",
+                    ),
+                    TextSpan(
+                      text: user.target.email,
+                      style: HTextStyles.subtitle.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: '. Follow the link to verify your email address.',
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: inProgress
-                    ? null
-                    : manager.resendVerificationEmail.run,
-                child: isResending
-                    ? const Text('Resending...')
-                    : const Text('Resend Verification Email'),
+              24.verticalSpace,
+              HPrimaryButton(
+                'Check Verification',
+                isLoading: isChecking,
+                enabled: !inProgress,
+                onPressed: manager.checkVerification.run,
+              ),
+              16.verticalSpace,
+              HOutlinedButton(
+                'Resend Verification Email',
+                isLoading: isResending,
+                enabled: false,
+                onPressed: manager.resendVerificationEmail.run,
               ),
               if (!context.canPop()) ...[
-                TextButton(
-                  onPressed: inProgress ? null : manager.signOut.run,
-                  child: const Text('Go back'),
+                32.verticalSpace,
+                HTextButton(
+                  'Go back',
+                  icon: const Icon(Icons.chevron_left),
+                  enabled: !inProgress,
+                  onPressed: manager.signOut.run,
                 ),
               ],
             ],

@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hemo/_features/auth/_managers/auth_manager.dart';
+import 'package:hemo/_features/auth/_widgets/auth_options_widget.dart';
+import 'package:hemo/_features/auth/_widgets/auth_redirect_link.dart';
+import 'package:hemo/_features/onboarding/_managers/onboarding_manager.dart';
+import 'package:hemo/_shared/ui/theme/h_colors.dart';
+import 'package:hemo/_shared/ui/theme/h_text_styles.dart';
+import 'package:hemo/_shared/ui/ui/buttons/h_primary_button.dart';
+import 'package:hemo/_shared/ui/ui/input/h_text_field.dart';
+import 'package:hemo/_shared/utils/validators.dart';
+import 'package:hemo/routing/routes.dart';
 
 class SignUpPage extends WatchingStatefulWidget {
   const SignUpPage({super.key});
@@ -11,6 +22,7 @@ class SignUpPage extends WatchingStatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final AuthManager _manager = di<AuthManager>();
+  final OnboardingManager _onboardingManager = di<OnboardingManager>();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -21,6 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void initState() {
     super.initState();
+
     _manager.signUp.errors.listen((error, _) {
       if (error == null) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -34,57 +47,102 @@ class _SignUpPageState extends State<SignUpPage> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _manager.signUp.dispose();
     super.dispose();
+  }
+
+  void _clearFields() {
+    _nameController.clear();
+    _emailController.clear();
+    _passwordController.clear();
+    _formKey.currentState?.reset();
   }
 
   @override
   Widget build(BuildContext context) {
     final isLoading = watchValue((AuthManager m) => m.signUp.isRunning);
 
+    registerHandler(
+      select: (AuthManager m) => m.signUp,
+      handler: (context, isSuccess, _) async {
+        if (isSuccess) {
+          _onboardingManager.completeOnboarding.run();
+          _clearFields();
+          await context.push(Routes.emailVerification);
+        }
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
-        padding: const .all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 20).r,
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: .stretch,
             children: [
-              TextFormField(
-                decoration: const InputDecoration(hintText: 'Name'),
+              24.verticalSpace,
+              Text(
+                'Create an account',
+                style: HTextStyles.title.copyWith(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.05.sp,
+                ),
+              ),
+              12.verticalSpace,
+              Text(
+                'Create your account and fill in the form below to get started',
+                style: HTextStyles.subtitle,
+              ),
+              24.verticalSpace,
+              HTextField(
+                label: 'Name',
+                hint: 'Enter your name',
                 controller: _nameController,
-                validator: (v) {
-                  if (v == null || v.isEmpty) return 'Name is required';
-                  return null;
-                },
+                enabled: !isLoading,
+                validator: HValidators.name,
               ),
-              const SizedBox(height: 20),
-              TextFormField(
-                decoration: const InputDecoration(hintText: 'Email'),
+              16.verticalSpace,
+              HTextField(
+                label: 'Email',
+                hint: 'Enter your email address',
                 controller: _emailController,
-                validator: (v) {
-                  if (v == null || v.isEmpty) return 'Email is required';
-                  return null;
-                },
+                keyboardType: TextInputType.emailAddress,
+                enabled: !isLoading,
+                validator: HValidators.email,
               ),
-              const SizedBox(height: 20),
-              TextFormField(
-                decoration: const InputDecoration(hintText: 'Password'),
-                obscureText: true,
+              16.verticalSpace,
+              HTextField(
+                label: 'Password',
+                hint: 'Enter your password',
                 controller: _passwordController,
-                validator: (v) {
-                  if (v == null || v.isEmpty) return 'Password is required';
-                  return null;
-                },
+                isPassword: true,
+                enabled: !isLoading,
+                validator: HValidators.signUpPassword,
               ),
-              const SizedBox(height: 40),
-              FilledButton(
-                onPressed: isLoading ? null : onSignUpPressed,
-                child: isLoading
-                    ? const Text('Loading...')
-                    : const Text('Sign Up'),
+              32.verticalSpace,
+              HPrimaryButton(
+                'Sign Up',
+                isLoading: isLoading,
+                onPressed: onSignUpPressed,
               ),
+              32.verticalSpace,
+              Row(
+                mainAxisAlignment: .center,
+                spacing: 8.r,
+                children: [
+                  const Expanded(child: Divider()),
+                  Text(
+                    'or Sign in with',
+                    style: HTextStyles.subtitle.copyWith(color: HColors.gray2),
+                  ),
+                  const Expanded(child: Divider()),
+                ],
+              ),
+              32.verticalSpace,
+              const AuthOptionsWidget(),
+              32.verticalSpace,
+              const AuthRedirectionLink.signUp(),
             ],
           ),
         ),

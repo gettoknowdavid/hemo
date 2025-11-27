@@ -23,16 +23,18 @@ final class AuthManager with ChangeNotifier implements Disposable {
 
   final _log = Logger('AUTH_MANAGER');
 
-  late final Command<SignInParams, void> signIn = .createAsyncNoResult(
+  late final Command<SignInParams, bool> signIn = .createAsync(
     (params) => _auth.signIn(params).then(_handleSignIn),
+    initialValue: false,
   );
 
   late final Command<void, void> signOut = .createAsyncNoParamNoResult(
     () => _auth.signOut().whenComplete(_handleSignOut),
   );
 
-  late final Command<SignUpParams, void> signUp = .createAsyncNoResult(
+  late final Command<SignUpParams, bool> signUp = .createAsync(
     (params) => _auth.signUp(params).then(_handleSignUp),
+    initialValue: false,
   );
 
   late final Command<void, bool?> checkVerification = .createAsyncNoParam(
@@ -143,7 +145,7 @@ final class AuthManager with ChangeNotifier implements Disposable {
     return this;
   }
 
-  Future<void> _handleSignIn(String uid) async {
+  Future<bool> _handleSignIn(String uid) async {
     try {
       final user = await _store.getUser(uid);
 
@@ -154,6 +156,7 @@ final class AuthManager with ChangeNotifier implements Disposable {
 
         di.pushNewScope(scopeName: HScope.unverified);
         di.registerSingleton<HUserProxy>(HUserProxy(user));
+        return true;
       } else {
         final firebaseUser = _auth.currentUser!;
         if (firebaseUser.emailVerified && firebaseUser.phoneNumber == null) {
@@ -164,6 +167,7 @@ final class AuthManager with ChangeNotifier implements Disposable {
           di.pushNewScope(scopeName: HScope.noPhoneNumber);
           final target = HUser.fromFirebaseUser(firebaseUser);
           di.registerSingleton<HUserProxy>(HUserProxy(target));
+          return true;
         } else {
           if (di.hasScope(HScope.authenticated)) {
             _log.info(
@@ -175,36 +179,36 @@ final class AuthManager with ChangeNotifier implements Disposable {
           _log.info('AUTHENTICATED ::: PUSHING "authenticated" SCOPE');
           di.pushNewScope(scopeName: HScope.authenticated);
           di.registerSingleton<HUserProxy>(HUserProxy(user));
+          return true;
         }
       }
-      notifyListeners();
     } on Exception catch (error) {
       _log.severe('ERROR FETCHING USER FROM DB, FORCING SIGN_OUT', error);
 
       await _auth.signOut();
       await _handleSignOut();
+      return false;
     } finally {
       notifyListeners();
     }
   }
 
-  Future<void> _handleSignUp(User firebaseUser) async {
+  Future<bool> _handleSignUp(User firebaseUser) async {
     try {
       final user = HUser.fromFirebaseUser(firebaseUser);
       await _store.createUser(user);
 
-      if (di.hasScope(HScope.unverified)) {
-        await di.dropScope(HScope.unverified);
-      }
-
       _log.info('UNVERIFIED ::: PUSHING "unverified" SCOPE');
+      if (di.hasScope(HScope.unverified)) await di.dropScope(HScope.unverified);
       di.pushNewScope(scopeName: HScope.unverified);
       di.registerSingleton<HUserProxy>(HUserProxy(user));
+      return true;
     } on Exception catch (error) {
       _log.severe('ERROR FETCHING USER FROM DB, FORCING SIGN_OUT', error);
 
       await _auth.signOut();
       await _handleSignOut();
+      return false;
     } finally {
       notifyListeners();
     }

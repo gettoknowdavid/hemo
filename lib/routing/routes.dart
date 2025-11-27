@@ -12,6 +12,7 @@ class Routes {
   static const onboarding = '/onboarding';
   static const signIn = '/sign-in';
   static const signUp = '/sign-up';
+  static const forgotPassword = '/forgot-password';
   static const emailVerification = '/email-verification';
   static const phoneNumberLinking = '/phone-number-linking';
   static const phoneNumberVerification = '$phoneNumberLinking/verification';

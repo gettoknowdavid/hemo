@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoadingIndicator extends StatelessWidget {
-  const LoadingIndicator({this.size, super.key});
+  const LoadingIndicator({this.size, this.color, super.key});
 
   final Size? size;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +13,7 @@ class LoadingIndicator extends StatelessWidget {
     return Center(
       child: SizedBox.fromSize(
         size: effectiveSize,
-        child: const CircularProgressIndicator(),
+        child: CircularProgressIndicator(color: color),
       ),
     );
   }

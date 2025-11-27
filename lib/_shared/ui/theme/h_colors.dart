@@ -7,4 +7,7 @@ final class HColors {
   static const Color onPrimary = Color(0xFFFFFFFF);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color onSurface = Color(0xFF000000);
+  static const Color gray1 = Color(0xFFF5F5F8);
+  static const Color gray2 = Color(0xFF8B8989);
+  static const Color gray3 = Color(0xFFE8E8E8);
 }
