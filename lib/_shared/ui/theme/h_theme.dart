@@ -12,7 +12,20 @@ final class HTheme {
         child: const Icon(Icons.arrow_back_ios),
       ),
     ),
-    appBarTheme: const AppBarTheme(elevation: 0, scrolledUnderElevation: 0),
+    appBarTheme: AppBarTheme(
+      data: AppBarThemeData(
+        backgroundColor: HColors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        titleTextStyle: TextStyle(
+          color: HColors.onSurface,
+          fontSize: 18.sp,
+          height: (24 / 18).h,
+          fontFamily: HTextStyles.fontFamily,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    ),
     colorScheme: const ColorScheme.light(primary: HColors.primary),
     dividerTheme: const DividerThemeData(color: HColors.gray3),
     fontFamily: HTextStyles.fontFamily,
