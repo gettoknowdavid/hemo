@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hemo/_features/auth/_managers/auth_manager.dart';
+import 'package:hemo/_shared/ui/theme/theme.dart';
+import 'package:hemo/_shared/ui/ui/buttons/h_primary_button.dart';
+import 'package:hemo/_shared/ui/ui/input/h_phone_number_field.dart';
+import 'package:hemo/_shared/utils/validators.dart';
 import 'package:hemo/routing/routes.dart';
-import 'package:intl_mobile_field/intl_mobile_field.dart';
 
 class PhoneNumberLinkingPage extends WatchingStatefulWidget {
   const PhoneNumberLinkingPage({super.key});
@@ -17,7 +21,7 @@ class _PhoneNumberLinkingPageState extends State<PhoneNumberLinkingPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-  String? _completePhoneNumber;
+  String? _phoneNumber;
   bool isSending = false;
 
   @override
@@ -58,7 +62,7 @@ class _PhoneNumberLinkingPageState extends State<PhoneNumberLinkingPage> {
           Routes.phoneNumberVerification,
           queryParameters: {
             'verificationId': value,
-            'phoneNumber': _completePhoneNumber,
+            'phoneNumber': _phoneNumber,
           },
         );
       },
@@ -90,43 +94,43 @@ You will have to sign in again to verify your phone number before you can contin
         if (result ?? false) _manager.signOut.run();
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Phone Number Verification')),
+        appBar: AppBar(),
         body: SingleChildScrollView(
-          padding: const .all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16).r,
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: .stretch,
               children: [
-                IntlMobileField(
-                  initialCountryCode: 'NG',
-                  languageCode: 'en',
-                  enabled: !isInProgress,
-                  onChanged: (value) => setState(
-                    () => _completePhoneNumber = value.completeNumber,
+                24.verticalSpace,
+                Text(
+                  'Add your Phone Number',
+                  style: HTextStyles.title.copyWith(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.05.sp,
                   ),
-                  dropdownIcon: const Icon(Icons.keyboard_arrow_down, size: 18),
-                  dropdownIconPosition: Position.trailing,
-                  flagsButtonMargin: const .only(right: 10),
-                  disableLengthCounter: true,
-                  showFieldCountryFlag: false,
-                  decoration: const InputDecoration(labelText: 'Mobile Number'),
-                  validator: (mobileNumber) {
-                    if (mobileNumber == null || mobileNumber.number.isEmpty) {
-                      return 'Please enter a mobile number';
-                    }
-                    if (!RegExp(r'^[0-9]+$').hasMatch(mobileNumber.number)) {
-                      return 'Only digits are allowed';
-                    }
-                    return null;
-                  },
+                ),
+                12.verticalSpace,
+                Text(
+                  '''
+To secure your account, please provide a valid mobile number. We'll send a one-time verification code to confirm you're the owner.''',
+                  style: HTextStyles.subtitle,
+                ),
+                24.verticalSpace,
+                HPhoneNumberField(
+                  label: 'Mobile Number',
+                  hint: 'Enter your mobile number',
+                  enabled: !isInProgress,
+                  onChanged: (v) =>
+                      setState(() => _phoneNumber = v.phoneNumber),
+                  validator: HValidators.phoneNumber,
                 ),
                 const SizedBox(height: 20),
-                FilledButton(
-                  onPressed: isInProgress ? null : sendVerificationCode,
-                  child: isInProgress
-                      ? const Text('Sending...')
-                      : const Text('Send code'),
+                HPrimaryButton(
+                  'Send code',
+                  isLoading: isInProgress,
+                  enabled: !isInProgress,
+                  onPressed: sendVerificationCode,
                 ),
               ],
             ),
@@ -137,11 +141,11 @@ You will have to sign in again to verify your phone number before you can contin
   }
 
   void sendVerificationCode() {
-    if (_completePhoneNumber != null) {
+    if (_phoneNumber != null) {
       setState(() => isSending = true);
 
       _manager.verifyPhoneNumber.run((
-        phoneNumber: _completePhoneNumber!,
+        phoneNumber: _phoneNumber!,
         onCodeSent: (id, token) {},
         onVerificationFailed: (error) {},
         onCodeTimeout: (id) {},
