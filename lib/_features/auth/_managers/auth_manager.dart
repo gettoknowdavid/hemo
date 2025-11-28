@@ -109,104 +109,20 @@ final class AuthManager with ChangeNotifier implements Disposable {
   );
 
   Future<AuthManager> initialize() async {
-    final firebaseUser = _auth.currentUser;
-    if (firebaseUser == null) {
-      await _handleSignOut();
-      return this;
-    }
-
-    if (!firebaseUser.emailVerified) {
-      if (di.hasScope(HScope.unverified)) {
-        await di.dropScope(HScope.unverified);
-      }
-
-      di.pushNewScope(scopeName: HScope.unverified);
-      final target = HUser.fromFirebaseUser(firebaseUser);
-      di.registerSingleton<HUserProxy>(HUserProxy(target));
-
-      notifyListeners();
-      return this;
-    }
-
-    if (firebaseUser.emailVerified && firebaseUser.phoneNumber == null) {
-      if (di.hasScope(HScope.noPhoneNumber)) {
-        await di.dropScope(HScope.noPhoneNumber);
-      }
-
-      di.pushNewScope(scopeName: HScope.noPhoneNumber);
-      final target = HUser.fromFirebaseUser(firebaseUser);
-      di.registerSingleton<HUserProxy>(HUserProxy(target));
-
-      notifyListeners();
-      return this;
-    }
-
-    await _handleSignIn(firebaseUser.uid);
+    await _resolveUserState();
     return this;
   }
 
-  Future<bool> _handleSignIn(String uid) async {
-    try {
-      final user = await _store.getUser(uid);
-
-      if (!user.emailVerified) {
-        if (di.hasScope(HScope.unverified)) {
-          await di.dropScope(HScope.unverified);
-        }
-
-        di.pushNewScope(scopeName: HScope.unverified);
-        di.registerSingleton<HUserProxy>(HUserProxy(user));
-        return true;
-      } else {
-        final firebaseUser = _auth.currentUser!;
-        if (firebaseUser.emailVerified && firebaseUser.phoneNumber == null) {
-          if (di.hasScope(HScope.noPhoneNumber)) {
-            await di.dropScope(HScope.noPhoneNumber);
-          }
-
-          di.pushNewScope(scopeName: HScope.noPhoneNumber);
-          final target = HUser.fromFirebaseUser(firebaseUser);
-          di.registerSingleton<HUserProxy>(HUserProxy(target));
-          return true;
-        } else {
-          if (di.hasScope(HScope.authenticated)) {
-            _log.info(
-              'HAS SCOPE AUTHENTICATED ::: DROPPING "authenticated" SCOPE',
-            );
-            await di.dropScope(HScope.authenticated);
-          }
-
-          _log.info('AUTHENTICATED ::: PUSHING "authenticated" SCOPE');
-          di.pushNewScope(scopeName: HScope.authenticated);
-          di.registerSingleton<HUserProxy>(HUserProxy(user));
-          return true;
-        }
-      }
-    } on Exception catch (error) {
-      _log.severe('ERROR FETCHING USER FROM DB, FORCING SIGN_OUT', error);
-
-      await _auth.signOut();
-      await _handleSignOut();
-      return false;
-    } finally {
-      notifyListeners();
-    }
-  }
+  Future<bool> _handleSignIn(String uid) => _resolveUserState(uid: uid);
 
   Future<bool> _handleSignUp(User firebaseUser) async {
     try {
       final user = HUser.fromFirebaseUser(firebaseUser);
       await _store.createUser(user);
 
-      _log.info('UNVERIFIED ::: PUSHING "unverified" SCOPE');
-      if (di.hasScope(HScope.unverified)) await di.dropScope(HScope.unverified);
-      di.pushNewScope(scopeName: HScope.unverified);
-      di.registerSingleton<HUserProxy>(HUserProxy(user));
-      return true;
+      return _resolveUserState(firebaseUser: firebaseUser);
     } on Exception catch (error) {
       _log.severe('ERROR FETCHING USER FROM DB, FORCING SIGN_OUT', error);
-
-      await _auth.signOut();
       await _handleSignOut();
       return false;
     } finally {
@@ -227,33 +143,67 @@ final class AuthManager with ChangeNotifier implements Disposable {
     notifyListeners();
   }
 
-  Future<bool?> _handleVerification(bool emailVerified) async {
+  Future<bool?> _handleVerification(bool emailVerified) {
+    return _resolveUserState();
+  }
+
+  /// Determines the user's current state and pushes the appropriate scope.
+  /// This replaces the logic from both `initialize` and `_handleSignIn`.
+  Future<bool> _resolveUserState({String? uid, User? firebaseUser}) async {
+    // Determine the user source. If no user is passed, get the current one.
+    final user = firebaseUser ?? _auth.currentUser;
+    final userId = uid ?? user?.uid;
+
     try {
-      final firebaseUser = _auth.currentUser;
-      if (firebaseUser == null) return false;
-
-      final userProxy = di<HUserProxy>();
-      if (firebaseUser.emailVerified) {
-        userProxy.update(emailVerified: emailVerified);
-        await _store.updateUser(userProxy.target);
-
-        if (di.hasScope(HScope.noPhoneNumber)) {
-          await di.dropScope(HScope.noPhoneNumber);
-        }
-
-        di.pushNewScope(scopeName: HScope.noPhoneNumber);
-        di.registerSingleton<HUserProxy>(userProxy);
-
-        return true;
-      } else {
+      // STATE 1: Unauthenticated
+      if (user == null || userId == null) {
+        await _handleSignOut();
         return false;
       }
+
+      // From here, we know a user exists in Firebase Auth.
+      // Get their corresponding data from Firestore.
+      final hUser = await _store.getUser(userId);
+      final userProxy = HUserProxy(hUser);
+
+      // STATE 2: Email not verified
+      if (!hUser.emailVerified) {
+        await _setScope(HScope.unverified, userProxy);
+        return true;
+      }
+
+      // STATE 3: Phone number not linked
+      if (hUser.phoneNumber == null || hUser.phoneNumber!.isEmpty) {
+        await _setScope(HScope.noPhoneNumber, userProxy);
+        return true;
+      }
+
+      // STATE 4: Missing required personal info
+      if (!hUser.profileComplete) {
+        await _setScope(HScope.personalInfo, userProxy);
+        return true;
+      }
+
+      // STATE 5: Fully Authenticated and Profile Complete
+      await _setScope(HScope.authenticated, userProxy);
+      return true;
     } on Exception catch (error) {
-      _log.severe('Error checking verification', error);
-      throw Exception('An error occurred while checking verification: $error');
+      _log.severe('Error resolving user state, forcing sign out.', error);
+      await _handleSignOut();
+      return false;
     } finally {
       notifyListeners();
     }
+  }
+
+  /// Helper function to push a new scope
+  Future<void> _setScope(String scopeName, HUserProxy userProxy) async {
+    _log.info('SETTING SCOPE ${scopeName.toUpperCase()}');
+    if (di.currentScopeName == scopeName) return;
+    if (di.hasScope(scopeName)) await di.dropScope(scopeName);
+
+    di.pushNewScope(scopeName: scopeName);
+    di.registerSingleton<HUserProxy>(userProxy);
   }
 
   @override
