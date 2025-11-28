@@ -15,14 +15,14 @@ final class HTheme {
     appBarTheme: AppBarTheme(
       data: AppBarThemeData(
         backgroundColor: HColors.surface,
+        centerTitle: true,
         elevation: 0,
         scrolledUnderElevation: 0,
         titleTextStyle: TextStyle(
           color: HColors.onSurface,
           fontSize: 18.sp,
-          height: (24 / 18).h,
           fontFamily: HTextStyles.fontFamily,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
         ),
       ),
     ),

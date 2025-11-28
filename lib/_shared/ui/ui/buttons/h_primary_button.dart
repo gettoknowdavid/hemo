@@ -9,6 +9,7 @@ class HPrimaryButton extends StatelessWidget {
     this.enabled = true,
     this.isLoading = false,
     this.iconAlignment,
+    this.style,
     super.key,
   });
 
@@ -18,10 +19,12 @@ class HPrimaryButton extends StatelessWidget {
   final bool isLoading;
   final bool enabled;
   final IconAlignment? iconAlignment;
+  final ButtonStyle? style;
 
   @override
   Widget build(BuildContext context) {
     return FilledButton.icon(
+      style: style,
       onPressed: isLoading || !enabled ? null : onPressed,
       label: isLoading ? const LoadingIndicator() : Text(label),
       icon: isLoading ? null : icon,
