@@ -26,6 +26,7 @@ final class HUserProxy extends ChangeNotifier {
     bool? canDonate,
     String? photoURL,
     bool? emailVerified,
+    bool? profileComplete,
   }) {
     // Use the copyWith method on the target HUser to create an updated instance
     _target = _target.copyWith(
@@ -37,6 +38,7 @@ final class HUserProxy extends ChangeNotifier {
       canDonate: canDonate,
       photoURL: photoURL,
       emailVerified: emailVerified,
+      profileComplete: profileComplete,
     );
     // Notify all listeners that the proxy's data has changed
     notifyListeners();
@@ -59,4 +61,6 @@ final class HUserProxy extends ChangeNotifier {
   String? get photoURL => _target.photoURL;
 
   bool get emailVerified => _target.emailVerified;
+
+  bool get profileComplete => _target.profileComplete;
 }

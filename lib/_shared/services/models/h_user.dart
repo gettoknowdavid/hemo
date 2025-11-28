@@ -20,6 +20,7 @@ final class HUser with EquatableMixin {
     this.canDonate = false,
     this.photoURL,
     this.emailVerified = false,
+    this.profileComplete = false,
   });
 
   factory HUser.empty() => const HUser(uid: '', name: '', email: '');
@@ -50,6 +51,7 @@ final class HUser with EquatableMixin {
       canDonate: data['can_donate'] as bool? ?? false,
       photoURL: data['photo_url'] as String?,
       emailVerified: data['email_verified'] as bool? ?? false,
+      profileComplete: data['profile_complete'] as bool? ?? false,
     );
   }
 
@@ -62,6 +64,7 @@ final class HUser with EquatableMixin {
   final bool canDonate;
   final String? photoURL;
   final bool emailVerified;
+  final bool profileComplete;
 
   Map<String, dynamic> toFirestore() => {
     'uid': uid,
@@ -72,6 +75,7 @@ final class HUser with EquatableMixin {
     'blood_group': bloodGroup.name,
     'can_donate': canDonate,
     'email_verified': emailVerified,
+    'profile_complete': profileComplete,
     if (photoURL != null) 'photo_url': photoURL,
   };
 
@@ -86,6 +90,7 @@ final class HUser with EquatableMixin {
     canDonate,
     photoURL,
     emailVerified,
+    profileComplete,
   ];
 
   /// Creates a new HUser instance with updated fields.
@@ -98,6 +103,7 @@ final class HUser with EquatableMixin {
     bool? canDonate,
     String? photoURL,
     bool? emailVerified,
+    bool? profileComplete,
   }) {
     return HUser(
       uid: uid,
@@ -109,6 +115,7 @@ final class HUser with EquatableMixin {
       canDonate: canDonate ?? this.canDonate,
       photoURL: photoURL ?? this.photoURL,
       emailVerified: emailVerified ?? this.emailVerified,
+      profileComplete: profileComplete ?? this.profileComplete,
     );
   }
 }
