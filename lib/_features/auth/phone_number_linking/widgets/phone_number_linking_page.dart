@@ -25,25 +25,6 @@ class _PhoneNumberLinkingPageState extends State<PhoneNumberLinkingPage> {
   bool isSending = false;
 
   @override
-  void initState() {
-    super.initState();
-
-    // Listen errors on the verify phone number command
-    _manager.verifyPhoneNumber.errors.listen((error, _) {
-      if (error == null) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to send code: ${error.error}')),
-      );
-    });
-  }
-
-  @override
-  void dispose() {
-    _manager.verifyPhoneNumber.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final isCommandRunning = watchValue(
       (AuthManager m) => m.verifyPhoneNumber.isRunning,
@@ -55,9 +36,7 @@ class _PhoneNumberLinkingPageState extends State<PhoneNumberLinkingPage> {
       select: (AuthManager m) => m.verificationId,
       handler: (context, value, cancel) async {
         if (value == null) return;
-
         setState(() => isSending = false);
-
         await context.pushNamed(
           Routes.phoneNumberVerification,
           queryParameters: {
@@ -95,45 +74,54 @@ You will have to sign in again to verify your phone number before you can contin
       },
       child: Scaffold(
         appBar: AppBar(),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16).r,
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: .stretch,
-              children: [
-                24.verticalSpace,
-                Text(
-                  'Add your Phone Number',
-                  style: HTextStyles.title.copyWith(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.05.sp,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20).r,
+          child: Column(
+            crossAxisAlignment: .stretch,
+            children: [
+              20.verticalSpace,
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: .stretch,
+                      children: [
+                        Text(
+                          'Add your Phone Number',
+                          style: HTextStyles.title.copyWith(
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.05.sp,
+                          ),
+                        ),
+                        12.verticalSpace,
+                        Text(
+                          '''
+To secure your account, please provide a valid mobile number. We'll send a one-time verification code to confirm you're the owner.''',
+                          style: HTextStyles.subtitle,
+                        ),
+                        24.verticalSpace,
+                        HPhoneNumberField(
+                          label: 'Mobile Number',
+                          hint: 'Enter your mobile number',
+                          enabled: !isInProgress,
+                          onChanged: (v) =>
+                              setState(() => _phoneNumber = v.phoneNumber),
+                          validator: HValidators.phoneNumber,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                12.verticalSpace,
-                Text(
-                  '''
-To secure your account, please provide a valid mobile number. We'll send a one-time verification code to confirm you're the owner.''',
-                  style: HTextStyles.subtitle,
-                ),
-                24.verticalSpace,
-                HPhoneNumberField(
-                  label: 'Mobile Number',
-                  hint: 'Enter your mobile number',
-                  enabled: !isInProgress,
-                  onChanged: (v) =>
-                      setState(() => _phoneNumber = v.phoneNumber),
-                  validator: HValidators.phoneNumber,
-                ),
-                const SizedBox(height: 20),
-                HPrimaryButton(
-                  'Send code',
-                  isLoading: isInProgress,
-                  enabled: !isInProgress,
-                  onPressed: sendVerificationCode,
-                ),
-              ],
-            ),
+              ),
+              HPrimaryButton(
+                'Send code',
+                isLoading: isInProgress,
+                enabled: !isInProgress,
+                onPressed: sendVerificationCode,
+              ),
+              20.verticalSpace,
+            ],
           ),
         ),
       ),
@@ -152,5 +140,24 @@ To secure your account, please provide a valid mobile number. We'll send a one-t
         onVerificationCompleted: (credential) {},
       ));
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Listen errors on the verify phone number command
+    _manager.verifyPhoneNumber.errors.listen((error, _) {
+      if (error == null) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send code: ${error.error}')),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _manager.verifyPhoneNumber.dispose();
+    super.dispose();
   }
 }
