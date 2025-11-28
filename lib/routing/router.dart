@@ -10,6 +10,8 @@ import 'package:hemo/_features/auth/sign_up/widgets/sign_up_page.dart';
 import 'package:hemo/_features/home/widgets/home_page.dart';
 import 'package:hemo/_features/onboarding/widgets/base_page.dart';
 import 'package:hemo/_features/onboarding/widgets/onboarding_page.dart';
+import 'package:hemo/_features/profile/personal_information/widgets/basic_information_page.dart';
+import 'package:hemo/_features/profile/personal_information/widgets/personal_information_page.dart';
 import 'package:hemo/_shared/services/models/h_scope.dart';
 import 'package:hemo/routing/routes.dart';
 
@@ -28,8 +30,11 @@ GoRouter routerConfig() {
       case HScope.unverified:
         return Routes.emailVerification;
       case HScope.noPhoneNumber:
-        if ([Routes.phoneNumberVerification].contains(nextRoute)) return null;
+        if (Routes.phoneNumberVerification == nextRoute) return null;
         return Routes.phoneNumberLinking;
+      case HScope.personalInfo:
+        if (Routes.basicInfo == nextRoute) return null;
+        return Routes.personalInfo;
       case HScope.authenticated:
         if (isPublicRoute) return Routes.home;
         return null;
@@ -78,7 +83,14 @@ GoRouter routerConfig() {
           ),
         ],
       ),
-
+      GoRoute(
+        path: Routes.personalInfo,
+        builder: (context, state) => const PersonalInformationPage(),
+      ),
+      GoRoute(
+        path: Routes.basicInfo,
+        builder: (context, state) => const BasicInformationPage(),
+      ),
       GoRoute(
         path: Routes.home,
         builder: (context, state) => const HomePage(),
