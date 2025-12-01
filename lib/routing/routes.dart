@@ -16,8 +16,9 @@ class Routes {
   static const emailVerification = '/email-verification';
   static const phoneNumberLinking = '/phone-number-linking';
   static const phoneNumberVerification = '$phoneNumberLinking/verification';
-  static const personalInfo = '/personal-information';
-  static const basicInfo = '/basic-information';
+  static const profileSetup1 = '/profile-setup-1';
+  static const profileSetup2 = '/profile-setup-2';
+  static const profileSetup3 = '/profile-setup-3';
   static const home = '/';
 }
 

@@ -22,6 +22,7 @@ class HTextField extends StatefulWidget {
     this.onChanged,
     this.onTap,
     this.inputFormatters,
+    this.maxLines,
     super.key,
   });
 
@@ -41,6 +42,7 @@ class HTextField extends StatefulWidget {
   final void Function(String)? onChanged;
   final void Function()? onTap;
   final List<TextInputFormatter>? inputFormatters;
+  final int? maxLines;
 
   @override
   State<HTextField> createState() => _HTextFieldState();
@@ -74,20 +76,14 @@ class _HTextFieldState extends State<HTextField> {
       mainAxisSize: .min,
       children: [
         if (widget.label != null) ...[
-          Text(
-            widget.label!,
-            style: TextStyle(
-              fontSize: 14.sp,
-              height: (20 / 14).h,
-              fontFamily: HTextStyles.fontFamily,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          9.verticalSpace,
+          Text(widget.label!, style: HTextStyles.label),
+          6.verticalSpace,
         ],
         TextFormField(
           controller: widget.controller,
           cursorHeight: 20.h,
+          maxLines: widget.maxLines,
+          textAlignVertical: TextAlignVertical.top,
           decoration: InputDecoration(
             hintText: widget.hint,
             prefixIcon: widget.prefixIcon,

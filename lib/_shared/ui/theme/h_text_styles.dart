@@ -63,6 +63,14 @@ final class HTextStyles {
     fontWeight: FontWeight.w500,
   );
 
+  static final TextStyle pageTitle = TextStyle(
+    fontSize: 22.sp,
+    height: (28 / 22).h,
+    fontFamily: fontFamily,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.05.sp,
+  );
+
   static final TextStyle subtitle = TextStyle(
     fontSize: 13.sp,
     height: (18 / 13).h,
@@ -70,10 +78,17 @@ final class HTextStyles {
     fontWeight: FontWeight.w500,
   );
 
-  static final TextStyle label = TextStyle(
+  static final TextStyle button = TextStyle(
     fontSize: 14.sp,
     height: (20 / 14).h,
     fontFamily: fontFamily,
     fontWeight: FontWeight.w600,
+  );
+
+  static final TextStyle label = TextStyle(
+    fontSize: 13.sp,
+    height: (18 / 13).h,
+    fontFamily: fontFamily,
+    fontWeight: FontWeight.w500,
   );
 }

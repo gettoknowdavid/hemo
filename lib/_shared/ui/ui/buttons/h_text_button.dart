@@ -9,6 +9,7 @@ class HTextButton extends StatelessWidget {
     this.enabled = true,
     this.isLoading = false,
     this.iconAlignment,
+    this.style,
     super.key,
   });
 
@@ -18,6 +19,7 @@ class HTextButton extends StatelessWidget {
   final bool isLoading;
   final bool enabled;
   final IconAlignment? iconAlignment;
+  final ButtonStyle? style;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class HTextButton extends StatelessWidget {
       label: isLoading ? const LoadingIndicator() : Text(label),
       icon: isLoading ? null : icon,
       iconAlignment: iconAlignment,
+      style: style,
     );
   }
 }

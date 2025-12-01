@@ -28,10 +28,7 @@ class HemoApp extends WatchingWidget {
         theme: HTheme.theme,
         builder: (context, child) {
           final defaultTextScaler = MediaQuery.textScalerOf(context);
-          final textScaler = defaultTextScaler.clamp(
-            minScaleFactor: 0.85.sp,
-            maxScaleFactor: 1.sp,
-          );
+          final textScaler = defaultTextScaler.clamp(maxScaleFactor: 1.sp);
 
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaler: textScaler),

@@ -10,8 +10,9 @@ import 'package:hemo/_features/auth/sign_up/widgets/sign_up_page.dart';
 import 'package:hemo/_features/home/widgets/home_page.dart';
 import 'package:hemo/_features/onboarding/widgets/base_page.dart';
 import 'package:hemo/_features/onboarding/widgets/onboarding_page.dart';
-import 'package:hemo/_features/profile/personal_information/widgets/basic_information_page.dart';
-import 'package:hemo/_features/profile/personal_information/widgets/personal_information_page.dart';
+import 'package:hemo/_features/profile/personal_information/widgets/profile_setup_page_1.dart';
+import 'package:hemo/_features/profile/personal_information/widgets/profile_setup_page_2.dart';
+import 'package:hemo/_features/profile/personal_information/widgets/profile_setup_page_3.dart';
 import 'package:hemo/_shared/services/models/h_scope.dart';
 import 'package:hemo/routing/routes.dart';
 
@@ -32,9 +33,10 @@ GoRouter routerConfig() {
       case HScope.noPhoneNumber:
         if (Routes.phoneNumberVerification == nextRoute) return null;
         return Routes.phoneNumberLinking;
-      case HScope.personalInfo:
-        if (Routes.basicInfo == nextRoute) return null;
-        return Routes.personalInfo;
+      case HScope.profileSetup:
+        final allowed = [Routes.profileSetup2, Routes.profileSetup3];
+        if (allowed.contains(nextRoute)) return null;
+        return Routes.profileSetup1;
       case HScope.authenticated:
         if (isPublicRoute) return Routes.home;
         return null;
@@ -84,12 +86,16 @@ GoRouter routerConfig() {
         ],
       ),
       GoRoute(
-        path: Routes.personalInfo,
-        builder: (context, state) => const PersonalInformationPage(),
+        path: Routes.profileSetup1,
+        builder: (context, state) => const ProfileSetupPage1(),
       ),
       GoRoute(
-        path: Routes.basicInfo,
-        builder: (context, state) => const BasicInformationPage(),
+        path: Routes.profileSetup2,
+        builder: (context, state) => const ProfileSetupPage2(),
+      ),
+      GoRoute(
+        path: Routes.profileSetup3,
+        builder: (context, state) => const ProfileSetupPage3(),
       ),
       GoRoute(
         path: Routes.home,

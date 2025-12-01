@@ -89,10 +89,7 @@ You will have to sign in again to verify your phone number before you can contin
                       children: [
                         Text(
                           'Add your Phone Number',
-                          style: HTextStyles.title.copyWith(
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.05.sp,
-                          ),
+                          style: HTextStyles.pageTitle,
                         ),
                         12.verticalSpace,
                         Text(

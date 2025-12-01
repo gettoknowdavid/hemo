@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hemo/_shared/ui/theme/h_colors.dart';
 import 'package:hemo/_shared/ui/theme/h_text_styles.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
@@ -38,41 +37,33 @@ class _HPhoneNumberFieldState extends State<HPhoneNumberField> {
 
   @override
   Widget build(BuildContext context) {
+    final inputTheme = Theme.of(context).inputDecorationTheme;
+    final inputDecoration = InputDecoration(
+      hintText: widget.hint,
+      filled: inputTheme.filled,
+      fillColor: inputTheme.fillColor,
+      contentPadding: inputTheme.contentPadding,
+      isDense: inputTheme.isDense,
+      hintStyle: inputTheme.hintStyle,
+      prefixIconConstraints: inputTheme.prefixIconConstraints,
+      suffixIconConstraints: inputTheme.suffixIconConstraints,
+      visualDensity: VisualDensity.compact,
+    );
+
     return Column(
       crossAxisAlignment: .stretch,
       mainAxisSize: .min,
       children: [
         if (widget.label != null) ...[
-          Text(
-            widget.label!,
-            style: TextStyle(
-              fontSize: 14.sp,
-              height: (20 / 14).h,
-              fontFamily: HTextStyles.fontFamily,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          9.verticalSpace,
+          Text(widget.label!, style: HTextStyles.label),
+          6.verticalSpace,
         ],
         InternationalPhoneNumberInput(
           textFieldController: widget.controller,
           onInputValidated: (value) => setState(() => _isValidNumber = value),
-          inputDecoration: InputDecoration(
-            hintText: widget.hint,
-            filled: true,
-            fillColor: WidgetStateColor.resolveWith((states) {
-              if (states.contains(WidgetState.disabled)) return HColors.gray3;
-              return Colors.white;
-            }),
-            contentPadding: const EdgeInsets.fromLTRB(12, 10, 12, 10).r,
-            hintStyle: TextStyle(
-              color: HColors.gray2,
-              fontFamily: HTextStyles.fontFamily,
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w400,
-              height: (18 / 13).h,
-              letterSpacing: -0.02.w,
-            ),
+          inputDecoration: inputDecoration,
+          searchBoxDecoration: inputDecoration.copyWith(
+            hintText: 'Search by country name or dial code',
           ),
           isEnabled: widget.enabled,
           initialValue: widget.initialValue,
@@ -100,22 +91,7 @@ class _HPhoneNumberFieldState extends State<HPhoneNumberField> {
             leadingPadding: 0,
             trailingSpace: false,
           ),
-          inputBorder: WidgetStateInputBorder.resolveWith(
-            (states) {
-              final defaultBorder = OutlineInputBorder(
-                borderRadius: const BorderRadius.all(.circular(6)).r,
-                borderSide: BorderSide(color: HColors.gray3, width: 1.w),
-              );
-
-              if (states.contains(WidgetState.focused)) {
-                return defaultBorder.copyWith(
-                  borderSide: BorderSide(color: HColors.primary, width: 2.w),
-                );
-              }
-
-              return defaultBorder;
-            },
-          ),
+          inputBorder: inputTheme.border,
         ),
       ],
     );

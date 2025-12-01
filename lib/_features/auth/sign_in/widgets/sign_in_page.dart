@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hemo/_features/auth/_managers/auth_manager.dart';
 import 'package:hemo/_features/auth/_widgets/auth_options_widget.dart';
 import 'package:hemo/_features/auth/_widgets/auth_redirect_link.dart';
+import 'package:hemo/_features/onboarding/_managers/onboarding_manager.dart';
 import 'package:hemo/_shared/ui/theme/h_colors.dart';
 import 'package:hemo/_shared/ui/theme/h_text_styles.dart';
 import 'package:hemo/_shared/ui/ui/buttons/h_primary_button.dart';
@@ -22,6 +23,7 @@ class SignInPage extends WatchingStatefulWidget {
 
 class _SignInnPageState extends State<SignInPage> {
   final AuthManager _manager = di<AuthManager>();
+  final OnboardingManager _onboardingManager = di<OnboardingManager>();
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -51,6 +53,16 @@ class _SignInnPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     final isLoading = watchValue((AuthManager m) => m.signIn.isRunning);
 
+    registerHandler(
+      select: (AuthManager m) => m.signIn,
+      handler: (context, isSuccess, cancel) {
+        if (isSuccess) {
+          _onboardingManager.completeOnboarding.run();
+          context.go(Routes.home);
+        }
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -62,13 +74,7 @@ class _SignInnPageState extends State<SignInPage> {
             crossAxisAlignment: .stretch,
             children: [
               24.verticalSpace,
-              Text(
-                'Welcome to Hemo!',
-                style: HTextStyles.title.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.05.sp,
-                ),
-              ),
+              Text('Welcome to Hemo!', style: HTextStyles.pageTitle),
               12.verticalSpace,
               Text(
                 'Enter your email address and password to sign in',

@@ -5,3 +5,5 @@ analyzer:
 linter:
   rules:
     public_member_api_docs: false
+    use_setters_to_change_properties: false
+    avoid_positional_boolean_parameters: false

@@ -1,4 +1,26 @@
-enum BloodGroup { aPos, aNeg, bPos, bNeg, oPos, oNeg, abPos, abNeg, unknown }
+enum BloodGroup {
+  aPos,
+  aNeg,
+  bPos,
+  bNeg,
+  oPos,
+  oNeg,
+  abPos,
+  abNeg,
+  unknown
+  ;
+
+  static List<BloodGroup> uiValues = [
+    .aPos,
+    .aNeg,
+    .bPos,
+    .bNeg,
+    .oPos,
+    .oNeg,
+    .abPos,
+    .abNeg,
+  ];
+}
 
 extension BloodGroupX on BloodGroup {
   bool get isAPos => this == .aPos;

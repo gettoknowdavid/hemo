@@ -180,7 +180,7 @@ final class AuthManager with ChangeNotifier implements Disposable {
 
       // STATE 4: Missing required personal info
       if (!hUser.profileComplete) {
-        await _setScope(HScope.personalInfo, userProxy);
+        await _setScope(HScope.profileSetup, userProxy);
         return true;
       }
 

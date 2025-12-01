@@ -84,10 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
               24.verticalSpace,
               Text(
                 'Create an account',
-                style: HTextStyles.title.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.05.sp,
-                ),
+                style: HTextStyles.pageTitle,
               ),
               12.verticalSpace,
               Text(
